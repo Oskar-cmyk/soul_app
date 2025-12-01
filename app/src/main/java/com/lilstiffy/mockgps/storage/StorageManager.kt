@@ -33,6 +33,10 @@ object StorageManager {
         }
     }
 
+    fun clearHistory() {
+        locationHistory = mutableListOf()
+    }
+
     fun toggleFavoriteForPosition(locationEntry: LocationEntry) {
         if (containsFavoriteEntry(locationEntry))
             removeFavorite(locationEntry)

@@ -13,15 +13,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,10 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.LatLng
 import com.lilstiffy.mockgps.extensions.displayString
 import com.lilstiffy.mockgps.extensions.prettyPrint
-import com.lilstiffy.mockgps.service.VibratorService
 import com.lilstiffy.mockgps.ui.theme.ButtonGreen
 import com.lilstiffy.mockgps.ui.theme.ButtonRed
-import com.lilstiffy.mockgps.ui.theme.Gold
 
 @Composable
 fun FooterComponent(
@@ -62,18 +56,6 @@ fun FooterComponent(
         ) {
             // Location section
             Row {
-                Icon(
-                    modifier = Modifier
-                        .height(32.dp)
-                        .width(32.dp)
-                        .align(Alignment.CenterVertically),
-                    imageVector = Icons.Filled.Home,
-                    tint = Color.Gray,
-                    contentDescription = "address"
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
                 Text(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -88,18 +70,6 @@ fun FooterComponent(
 
             // Coordinates section
             Row {
-                Icon(
-                    modifier = Modifier
-                        .height(32.dp)
-                        .width(32.dp)
-                        .align(Alignment.CenterVertically),
-                    imageVector = Icons.Filled.Place,
-                    tint = Color.Red,
-                    contentDescription = "coordinates"
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
                 Text(
                     modifier = Modifier
                         .align(Alignment.CenterVertically),
@@ -114,33 +84,6 @@ fun FooterComponent(
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-                // Favorite button.
-                IconButton(
-                    modifier = Modifier
-                        .width(32.dp)
-                        .height(32.dp)
-                        .align(Alignment.CenterVertically),
-                    onClick = {
-                        onFavorite()
-                        VibratorService.vibrate()
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = if (isFavorite) Gold else Color.LightGray,
-                    )
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .height(32.dp)
-                            .width(32.dp)
-                            .align(Alignment.CenterVertically),
-                        imageVector = Icons.Sharp.Star,
-                        contentDescription = "toggle favorite"
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
                 // Toggle mocking button
                 IconToggleButton(
                     modifier = Modifier

@@ -44,49 +44,8 @@ fun SearchComponent(
     Box(
         modifier = modifier
     ) {
-        // Input field
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .align(Alignment.TopCenter),
-            value = text,
-            singleLine = true,
-            maxLines = 1,
-            textStyle = TextStyle.Default,
-            label = { Text("Search Location") },
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(32.dp),
-            onValueChange = { text = it },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-                onSearch(text)
-                keyboardController?.hide()
-            })
-        )
 
-        // Search button
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(horizontal = 8.dp),
-            onClick = { onSearch(text) },
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Blue, contentColor = Color.White
-            )
-        ) {
-            Icon(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                imageVector = Icons.Filled.Search,
-                contentDescription = "search"
-            )
-        }
+
     }
 
 }

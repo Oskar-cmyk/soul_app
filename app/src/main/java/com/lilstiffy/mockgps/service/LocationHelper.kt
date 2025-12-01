@@ -1,36 +1,14 @@
 package com.lilstiffy.mockgps.service
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
-import androidx.activity.ComponentActivity
-import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.lilstiffy.mockgps.MockGpsApp
 
 
 object LocationHelper {
-    private const val REQUEST_CODE = 69
-    val DEFAULT_LOCATION = LatLng(40.712776, -74.005974)
-
-    fun requestPermissions(activity: ComponentActivity) {
-        activity.requestPermissions(
-            arrayOf(
-                ACCESS_FINE_LOCATION,
-                ACCESS_COARSE_LOCATION
-            ), REQUEST_CODE
-        )
-    }
-
-    fun hasPermission(activity: ComponentActivity): Boolean {
-        return ContextCompat.checkSelfPermission(
-            activity,
-            ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+    val DEFAULT_LOCATION = LatLng(0.0000000, 0.0000000)
 
     // Geocoding
     fun reverseGeocoding(latLng: LatLng, result: (Address?) -> Unit) {
@@ -42,6 +20,7 @@ object LocationHelper {
                 result(address)
             }
         } else {
+            @Suppress("DEPRECATION")
             val response = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
             val address = response?.firstOrNull()
             result(address)
@@ -69,6 +48,7 @@ object LocationHelper {
                 result(LatLng(address.latitude, address.longitude))
             }
         } else {
+            @Suppress("DEPRECATION")
             val response = geocoder.getFromLocationName(searchterm, 1)
             val address = response?.firstOrNull()
 

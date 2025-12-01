@@ -16,9 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import com.lilstiffy.mockgps.service.LocationHelper
+import com.google.android.gms.maps.model.LatLng
 import com.lilstiffy.mockgps.service.MockLocationService
 import com.lilstiffy.mockgps.service.VibratorService
+import com.lilstiffy.mockgps.storage.StorageManager
 import com.lilstiffy.mockgps.ui.screens.MapScreen
 import com.lilstiffy.mockgps.ui.theme.MockGpsTheme
 
@@ -43,8 +44,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun toggleMocking(): Boolean {
-        if (isBound && LocationHelper.hasPermission(this)) {
+    fun toggleMocking(latLng: LatLng): Boolean {
+        if (isBound) {
+            mockLocationService?.latLng = latLng
             mockLocationService?.toggleMocking()
             if (mockLocationService?.isMocking == true) {
                 Toast.makeText(this, "Mocking location...", Toast.LENGTH_SHORT).show()
@@ -55,17 +57,19 @@ class MainActivity : ComponentActivity() {
                 VibratorService.vibrate()
                 return false
             }
-        } else if (!isBound && LocationHelper.hasPermission(this))
+        } else {
             Toast.makeText(this, "Service not bound", Toast.LENGTH_SHORT).show()
-        else
-            Toast.makeText(this, "No Location permission", Toast.LENGTH_SHORT).show()
-
+        }
         return false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Clear history to ensure the new
+        // default location is used.
+        StorageManager.clearHistory()
 
         setContent {
             MockGpsTheme {

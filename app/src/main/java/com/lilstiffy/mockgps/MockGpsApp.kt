@@ -14,6 +14,7 @@ class MockGpsApp : Application() {
         super.onCreate()
         shared = this
         StorageManager.initialise(this)
+        StorageManager.clearHistory()
         VibratorService.initialise(this)
     }
 

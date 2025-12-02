@@ -1,9 +1,11 @@
-# MockGPS App for Android
+# MockGPS to null islandd on Androidroid
 
-### All support is greatly appreciated
-https://buymeacoffee.com/lilstiffy
+This is adjusted original s l listiffy for the use of location spoofing for project.
 
-### Feel free to request features in order to make the app even better!
+I have removed option to change location, see maps, and also changed the needing of the location data, so user dont have to share location with the app. 
+
+##original site of the github repository is that:ginal site of the github repository is that:
+https://github.com/lilstiffy/MockGps
 
 ## Overview
 
@@ -23,12 +25,3 @@ This Android app allows users to mock their device's location, providing a conve
 - Developer mode and the MockGPS selected as selected Mock Location app.
 - Android Studio for building and running the app (optional).
 
-### Installation
-
-1. Clone the repository or download the APK file.
-   ```bash
-   git clone https://github.com/lilstiffy/mock-location-app.git
-
-### Screenshots (Dark / Light)
-
-<img src="demo_image.png" width="50%"><img src="demo_image_light.png" width="50%">

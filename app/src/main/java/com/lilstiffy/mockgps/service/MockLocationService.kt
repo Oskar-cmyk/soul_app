@@ -139,7 +139,7 @@ class MockLocationService : Service() {
     private suspend fun mockLoop() {
         while (isMocking) {
             val corrected = if (latLng.latitude == 0.0 && latLng.longitude == 0.0)
-                LatLng(0.0000000001, 0.0000000001)
+                LatLng(0.000000000, 0.000000000)
             else
                 latLng
 
@@ -155,7 +155,7 @@ class MockLocationService : Service() {
 
             Log.d(TAG, "Mocked location: ${loc.latitude}, ${loc.longitude}")
 
-            delay(300L)
+            delay(1000L)
         }
     }
 

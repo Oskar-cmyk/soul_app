@@ -136,10 +136,28 @@ class MockLocationService : Service() {
     }
 
     @SuppressLint("MissingPermission")
+    private suspend fun glitchEffect() {
+        Log.d(TAG, "GLITCH: Disabling mock provider to show real location.")
+        try {
+            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, false)
+            delay(10000L) // The duration of the "glitch"
+            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true)
+            Log.d(TAG, "GLITCH: Re-enabling mock provider.")
+        } catch (e: Exception) {
+            Log.e(TAG, "Glitch effect failed.", e)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
     private suspend fun mockLoop() {
+        // --- Set this to true to enable the glitch effect ---
+        val glitchEffectEnabled = true
+        // ---------------------------------------------------
+
         while (isMocking) {
             val corrected = if (latLng.latitude == 0.0 && latLng.longitude == 0.0)
-                LatLng(0.000000000, 0.000000000)
+                LatLng(0.000000001, 0.000000001)
+
             else
                 latLng
 
@@ -151,11 +169,19 @@ class MockLocationService : Service() {
                 elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
             }
 
-            locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, loc)
+            try {
+                locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, loc)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to set mock location", e)
+            }
 
             Log.d(TAG, "Mocked location: ${loc.latitude}, ${loc.longitude}")
 
-            delay(1000L)
+            delay(10000L)
+
+            if (glitchEffectEnabled) {
+                glitchEffect()
+            }
         }
     }
 

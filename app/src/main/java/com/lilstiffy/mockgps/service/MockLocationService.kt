@@ -22,6 +22,7 @@ class MockLocationService : Service() {
     companion object {
         const val TAG = "MockLocationService"
         var instance: MockLocationService? = null
+        const val ACTION_SHOW_MOCK_LOCATION_DIALOG = "com.lilstiffy.mockgps.SHOW_MOCK_LOCATION_DIALOG"
         private const val NOTIFICATION_CHANNEL_ID = "MockLocationServiceChannel"
         private const val NOTIFICATION_ID = 69
     }
@@ -60,9 +61,13 @@ class MockLocationService : Service() {
     @SuppressLint("MissingPermission")
     private fun startMockingLocation() {
         if (isMocking) return
-        isMocking = true
 
-        registerTestProvider()
+        if (!registerTestProvider()) {
+            // Failed to register, broadcast should have been sent
+            return
+        }
+
+        isMocking = true
 
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
@@ -87,7 +92,7 @@ class MockLocationService : Service() {
     }
     // ⬆⬆⬆ END MOCKING WITH LOCATION MANAGER ⬆⬆⬆
 
-    private fun registerTestProvider() {
+    private fun registerTestProvider(): Boolean {
         try {
             locationManager.addTestProvider(
                 LocationManager.GPS_PROVIDER,
@@ -96,13 +101,17 @@ class MockLocationService : Service() {
                 Criteria.POWER_LOW,
                 Criteria.ACCURACY_FINE
             )
-        } catch (_: Exception) {}
-
-        try {
             locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true)
-        } catch (_: Exception) {}
-
-        Log.d(TAG, "Test provider registered")
+            Log.d(TAG, "Test provider registered")
+            return true
+        } catch (e: SecurityException) {
+            sendBroadcast(Intent(ACTION_SHOW_MOCK_LOCATION_DIALOG))
+            Log.e(TAG, "SecurityException: Mock location app not set.", e)
+            return false
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to register test provider", e)
+            return false
+        }
     }
 
     private fun unregisterTestProvider() {

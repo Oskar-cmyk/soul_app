@@ -1,10 +1,10 @@
-# MockGPS to null islandd on Androidroid
+# MockGPS to NULL island on Android
 
-This is adjusted original s l listiffy for the use of location spoofing for project.
+This is adjusted original listiffy for the use of location spoofing for project.
 
 I have removed option to change location, see maps, and also changed the needing of the location data, so user dont have to share location with the app. 
 
-##original site of the github repository is that:ginal site of the github repository is that:
+## original site of the github repository is that:
 https://github.com/lilstiffy/MockGps
 
 ## Overview

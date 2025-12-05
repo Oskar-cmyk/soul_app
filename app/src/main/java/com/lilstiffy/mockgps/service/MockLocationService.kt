@@ -146,15 +146,21 @@ class MockLocationService : Service() {
 
     @SuppressLint("MissingPermission")
     private suspend fun glitchEffect() {
-        Log.d(TAG, "GLITCH: Disabling mock provider to show real location.")
+        Log.d(TAG, "GLITCH: Setting temporary glitch location.")
+        val glitchLocation = Location(LocationManager.GPS_PROVIDER).apply {
+            latitude = -0.000000001
+            longitude = 0.0
+            accuracy = 1f
+            time = System.currentTimeMillis()
+            elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+
+        }
         try {
-            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, false)
-            delay(10000L) // The duration of the "glitch"
-            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true)
-            Log.d(TAG, "GLITCH: Re-enabling mock provider.")
+            locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, glitchLocation)
         } catch (e: Exception) {
             Log.e(TAG, "Glitch effect failed.", e)
         }
+        delay(1000L) // How long to show the glitch location (1 second)
     }
 
     @SuppressLint("MissingPermission")
@@ -165,8 +171,7 @@ class MockLocationService : Service() {
 
         while (isMocking) {
             val corrected = if (latLng.latitude == 0.0 && latLng.longitude == 0.0)
-                LatLng(0.000000001, 0.000000001)
-
+                LatLng(0.0000000001, 0.000000000) // Avoid Null Island
             else
                 latLng
 
@@ -176,6 +181,7 @@ class MockLocationService : Service() {
                 accuracy = 1f
                 time = System.currentTimeMillis()
                 elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+
             }
 
             try {
@@ -186,9 +192,9 @@ class MockLocationService : Service() {
 
             Log.d(TAG, "Mocked location: ${loc.latitude}, ${loc.longitude}")
 
-            delay(10000L)
+            delay(2000L) // Mock for 1 seconds
 
-            if (glitchEffectEnabled) {
+            if (glitchEffectEnabled && isMocking) {
                 glitchEffect()
             }
         }

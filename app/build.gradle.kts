@@ -61,7 +61,9 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.appcompat:appcompat:1.6.1") // Add this line
+    // Latest version compatible with the old Support Library
+    implementation("com.github.AppIntro:AppIntro:6.3.1")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")

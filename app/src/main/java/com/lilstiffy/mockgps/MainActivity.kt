@@ -12,8 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat.startActivity
+import androidx.compose.ui.platform.LocalContext // <-- Import this
 import androidx.core.view.WindowCompat
 import com.google.android.gms.maps.model.LatLng
+import com.lilstiffy.mockgps.extensions.TutorialActivity
 import com.lilstiffy.mockgps.service.MockLocationService
 import com.lilstiffy.mockgps.service.VibratorService
 import com.lilstiffy.mockgps.storage.StorageManager
@@ -83,10 +86,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MapScreen(activity = this)
                     if (showDialog) {
-                        MockLocationDialog(onDismiss = { showDialog = false }, onConfirm = {
-                            openDeveloperSettings()
-                            showDialog = false
-                        })
+                        MockLocationDialog(
+                            onDismiss = { showDialog = false },
+                            onConfirm = {
+                                startActivity(Intent(this, TutorialActivity::class.java))
+                                showDialog = false
+                            }
+                        )
                     }
                 }
             }
@@ -109,26 +115,38 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun openDeveloperSettings() {
-        val intent = if (Settings.System.getString(contentResolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED) == "0") {
-            // Developer options are disabled, open "About phone"
-            Intent(Settings.ACTION_DEVICE_INFO_SETTINGS)
-        } else {
-            // Developer options are enabled
-            Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+        try {
+            // The best-case scenario: Dev options are on.
+            startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+        } catch (e1: Exception) {
+            try {
+                // The fallback: Dev options are off, so show the "About" screen.
+                Toast.makeText(this, "Enable Developer Options by tapping 'Build number' 7 times.", Toast.LENGTH_LONG).show()
+                startActivity(Intent(Settings.ACTION_DEVICE_INFO_SETTINGS))
+            } catch (e2: Exception) {
+                // The final fallback: Just open the main settings screen.
+                startActivity(Intent(Settings.ACTION_SETTINGS))
+            }
         }
-        startActivity(intent)
     }
 }
 
 @Composable
 fun MockLocationDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    val context = LocalContext.current // Get the context here
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = "Enable Mock Location") },
-        text = { Text("To use this feature, you must set this app as the mock location app in developer settings. Please follow the tutorial to enable this setting.") },
+        text = { Text("To use this feature, you must set this app as the mock location app in developer settings. Follow the tutorial to enable it.") },
         confirmButton = {
-            Button(onClick = onConfirm) {
-                Text("Open Settings")
+            Button(onClick = {
+                // Use the context to create the Intent and start the activity
+                val intent = Intent(context, TutorialActivity::class.java)
+                context.startActivity(intent)
+                onDismiss()
+            }) {
+                Text("Show Tutorial")
             }
         },
         dismissButton = {

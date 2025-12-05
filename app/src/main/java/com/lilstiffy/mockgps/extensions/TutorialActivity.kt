@@ -61,6 +61,21 @@ class TutorialActivity : AppIntro() {
     }
 
     /**
+     * This function is called by the 'onClick' attribute
+     * in the XML layout files.
+     */
+    fun openDeveloperOptions(view: View) {
+        try {
+            // Best case: Open developer options directly.
+            startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+        } catch (e: ActivityNotFoundException) {
+            // Fallback: Show a toast and open the main settings.
+            Toast.makeText(this, "Couldn't open Developer Options directly.", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(Settings.ACTION_SETTINGS))
+        }
+    }
+
+    /**
      * Opens the "About phone" settings screen to guide the user
      * to tap the "Build number".
      */

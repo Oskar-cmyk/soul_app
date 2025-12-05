@@ -56,7 +56,6 @@ class MockLocationService : Service() {
         if (isMocking) stopMockingLocation() else startMockingLocation()
     }
 
-    // ⬇⬇⬇ START MOCKING WITH LOCATION MANAGER ONLY ⬇⬇⬇
     @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     private fun startMockingLocation() {
@@ -90,9 +89,12 @@ class MockLocationService : Service() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         Log.d(TAG, "LocationManager mock stopped")
     }
-    // ⬆⬆⬆ END MOCKING WITH LOCATION MANAGER ⬆⬆⬆
 
+    @SuppressLint("MissingPermission")
     private fun registerTestProvider(): Boolean {
+        // Proactively remove any zombie provider left from a bad session
+        unregisterTestProvider()
+
         try {
             locationManager.addTestProvider(
                 LocationManager.GPS_PROVIDER,
@@ -114,10 +116,14 @@ class MockLocationService : Service() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun unregisterTestProvider() {
         try {
             locationManager.removeTestProvider(LocationManager.GPS_PROVIDER)
-        } catch (_: Exception) {}
+            Log.d(TAG, "Test provider unregistered successfully.")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to unregister test provider. It may have already been removed.", e)
+        }
     }
 
     private fun createNotification(): Notification {
@@ -148,8 +154,8 @@ class MockLocationService : Service() {
     private suspend fun glitchEffect() {
         Log.d(TAG, "GLITCH: Setting temporary glitch location.")
         val glitchLocation = Location(LocationManager.GPS_PROVIDER).apply {
-            latitude = -0.000000001
-            longitude = 0.0
+            latitude = -0.00000001
+            longitude = 0.1
             accuracy = 1f
             time = System.currentTimeMillis()
             elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
@@ -160,18 +166,19 @@ class MockLocationService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "Glitch effect failed.", e)
         }
-        delay(1000L) // How long to show the glitch location (1 second)
+        delay(500L) // How long to show the glitch location (0.5 second)
     }
 
     @SuppressLint("MissingPermission")
     private suspend fun mockLoop() {
-        // --- Set this to true to enable the glitch effect ---
-        val glitchEffectEnabled = true
-        // ---------------------------------------------------
+        // --- Configuration for the glitch effect ---
+        val glitchEffectEnabled = false
+        val randomDelayEnabled = false
+        // -------------------------------------------
 
         while (isMocking) {
             val corrected = if (latLng.latitude == 0.0 && latLng.longitude == 0.0)
-                LatLng(0.0000000001, 0.000000000) // Avoid Null Island
+                LatLng(0.00000001, 0.0000000) // Avoid Null Island
             else
                 latLng
 
@@ -181,7 +188,6 @@ class MockLocationService : Service() {
                 accuracy = 1f
                 time = System.currentTimeMillis()
                 elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
-
             }
 
             try {
@@ -192,7 +198,13 @@ class MockLocationService : Service() {
 
             Log.d(TAG, "Mocked location: ${loc.latitude}, ${loc.longitude}")
 
-            delay(2000L) // Mock for 1 seconds
+            // Cleaned up delay logic
+            val delayMillis = if (randomDelayEnabled) {
+                (1000L..20000L).random()
+            } else {
+                1000L
+            }
+            delay(delayMillis)
 
             if (glitchEffectEnabled && isMocking) {
                 glitchEffect()

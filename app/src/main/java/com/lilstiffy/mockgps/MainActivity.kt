@@ -105,6 +105,12 @@ class MainActivity : ComponentActivity() {
 
         StorageManager.clearHistory()
 
+        val serviceIntent = Intent(this, MockLocationService::class.java)
+
+        startService(serviceIntent) // Using startService() is also fine here and more common.
+
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+
         setContent {
             MockGpsTheme {
                 Surface(
@@ -128,10 +134,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        val serviceIntent = Intent(this, MockLocationService::class.java)
-        startService(serviceIntent)
-        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
 
         // Updated intent filter to listen for both broadcasts
         val intentFilter = IntentFilter().apply {

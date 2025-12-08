@@ -32,6 +32,9 @@ class MockLocationService : Service() {
         private set
     var latLng: LatLng = LatLng(0.0000000001, 0.0000000001)
 
+    // Create a lifecycle-aware coroutine scope
+    private val serviceJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
     private var mockJob: Job? = null
 
     override fun onCreate() {
@@ -49,6 +52,7 @@ class MockLocationService : Service() {
 
     override fun onDestroy() {
         stopMockingLocation()
+        serviceJob.cancel() // Cancel the entire scope when the service is destroyed
         super.onDestroy()
     }
 
@@ -56,7 +60,6 @@ class MockLocationService : Service() {
         if (isMocking) stopMockingLocation() else startMockingLocation()
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     private fun startMockingLocation() {
         if (isMocking) return
@@ -71,7 +74,8 @@ class MockLocationService : Service() {
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
 
-        mockJob = GlobalScope.launch(Dispatchers.IO) {
+        // Use the service's own scope, not GlobalScope
+        mockJob = serviceScope.launch {
             mockLoop()
         }
 
@@ -83,7 +87,7 @@ class MockLocationService : Service() {
         if (!isMocking) return
         isMocking = false
 
-        mockJob?.cancel()
+        mockJob?.cancel() // Cancel just the job, not the whole scope
         unregisterTestProvider()
 
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -155,7 +159,7 @@ class MockLocationService : Service() {
         Log.d(TAG, "GLITCH: Setting temporary glitch location.")
         val glitchLocation = Location(LocationManager.GPS_PROVIDER).apply {
             latitude = -0.00000001
-            longitude = 0.1
+            longitude = 0.0
             accuracy = 1f
             time = System.currentTimeMillis()
             elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
@@ -166,15 +170,33 @@ class MockLocationService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "Glitch effect failed.", e)
         }
-        delay(500L) // How long to show the glitch location (0.5 second)
+        delay(1000L) // How long to show the glitch location (1 second)
     }
 
     @SuppressLint("MissingPermission")
     private suspend fun mockLoop() {
         // --- Configuration for the glitch effect ---
-        val glitchEffectEnabled = false
-        val randomDelayEnabled = false
+        val glitchEffectEnabled = true
+        val randomDelayEnabled = true
         // -------------------------------------------
+
+        var nextLongDelayTime = System.currentTimeMillis() + (10_000L..20_000L).random()
+
+        fun computeDelay(randomDelayEnabled: Boolean): Long {
+            if (!randomDelayEnabled) {
+                return 1000L
+            }
+
+            val now = System.currentTimeMillis()
+
+            return if (now >= nextLongDelayTime) {
+                // Time for a long delay
+                nextLongDelayTime = now + (10_000L..20_000L).random() // schedule next window
+                5_000L
+            } else {
+                2000L
+            }
+        }
 
         while (isMocking) {
             val corrected = if (latLng.latitude == 0.0 && latLng.longitude == 0.0)
@@ -188,6 +210,7 @@ class MockLocationService : Service() {
                 accuracy = 1f
                 time = System.currentTimeMillis()
                 elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+
             }
 
             try {
@@ -198,12 +221,7 @@ class MockLocationService : Service() {
 
             Log.d(TAG, "Mocked location: ${loc.latitude}, ${loc.longitude}")
 
-            // Cleaned up delay logic
-            val delayMillis = if (randomDelayEnabled) {
-                (1000L..20000L).random()
-            } else {
-                1000L
-            }
+            val delayMillis = computeDelay(randomDelayEnabled)
             delay(delayMillis)
 
             if (glitchEffectEnabled && isMocking) {

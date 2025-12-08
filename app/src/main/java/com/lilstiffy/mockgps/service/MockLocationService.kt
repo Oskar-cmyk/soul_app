@@ -1,5 +1,6 @@
 package com.lilstiffy.mockgps.service
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
@@ -7,12 +8,14 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.lilstiffy.mockgps.R
 import kotlinx.coroutines.*
@@ -24,6 +27,7 @@ class MockLocationService : Service() {
         var instance: MockLocationService? = null
         const val ACTION_SHOW_MOCK_LOCATION_DIALOG = "com.lilstiffy.mockgps.SHOW_MOCK_LOCATION_DIALOG"
         private const val NOTIFICATION_CHANNEL_ID = "MockLocationServiceChannel"
+        const val ACTION_REQUEST_NOTIFICATION_PERMISSION = "com.lilstiffy.mockgps.REQUEST_NOTIFICATION_PERMISSION"
         private const val NOTIFICATION_ID = 69
     }
 
@@ -64,6 +68,14 @@ class MockLocationService : Service() {
     private fun startMockingLocation() {
         if (isMocking) return
 
+        // --- PERMISSION CHECK ---
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                // Permission is missing, send a broadcast to the Activity to request it
+                sendBroadcast(Intent(ACTION_REQUEST_NOTIFICATION_PERMISSION))
+                return // Stop here, will be called again by MainActivity if permission is granted
+            }
+        }
         if (!registerTestProvider()) {
             // Failed to register, broadcast should have been sent
             return

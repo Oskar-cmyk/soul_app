@@ -19,7 +19,7 @@ android {
     defaultConfig {
         applicationId = "com.lilstiffy.mockgps"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 32
         versionCode = 5
         versionName = "1.0.4"
 

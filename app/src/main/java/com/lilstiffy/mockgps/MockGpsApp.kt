@@ -12,6 +12,7 @@ class MockGpsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         shared = this
         StorageManager.initialise(this)
         StorageManager.clearHistory()

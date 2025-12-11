@@ -25,9 +25,16 @@ class TutorialActivity : AppIntro() {
             0
         ) != 0
 
-        // Only add the first slide if developer options are NOT enabled
+        // Only add the developer options slide if they are NOT enabled
         if (!devOptionsEnabled) {
-            addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.slide_enable_developer_options))
+            // Choose the manufacturer-specific layout for enabling developer options
+            val enableDevOptionsSlideLayout = when (Build.MANUFACTURER.lowercase()) {
+                "samsung" -> R.layout.slide_enable_dev_samsung
+                "huawei" -> R.layout.slide_enable_dev_huawei
+                "xiaomi" -> R.layout.slide_enable_dev_xiaomi
+                else -> R.layout.slide_enable_dev // Default layout
+            }
+            addSlide(AppIntroCustomLayoutFragment.newInstance(enableDevOptionsSlideLayout))
         }
 
         // Always add the manufacturer-specific slide

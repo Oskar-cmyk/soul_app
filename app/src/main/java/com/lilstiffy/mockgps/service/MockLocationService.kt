@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.service
+package com.gps.soul.service
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -17,7 +17,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
-import com.lilstiffy.mockgps.R
+import com.gps.soul.R
 import android.location.LocationManager.GPS_PROVIDER
 import android.os.Build
 import kotlinx.coroutines.*
@@ -27,9 +27,9 @@ class MockLocationService : Service() {
     companion object {
         const val TAG = "MockLocationService"
         var instance: MockLocationService? = null
-        const val ACTION_SHOW_MOCK_LOCATION_DIALOG = "com.lilstiffy.mockgps.SHOW_MOCK_LOCATION_DIALOG"
+        const val ACTION_SHOW_MOCK_LOCATION_DIALOG = "com.gps.soul.SHOW_MOCK_LOCATION_DIALOG"
         private const val NOTIFICATION_CHANNEL_ID = "MockLocationServiceChannel"
-        const val ACTION_REQUEST_NOTIFICATION_PERMISSION = "com.lilstiffy.mockgps.REQUEST_NOTIFICATION_PERMISSION"
+        const val ACTION_REQUEST_NOTIFICATION_PERMISSION = "com.gps.soul.REQUEST_NOTIFICATION_PERMISSION"
         private const val NOTIFICATION_ID = 69
     }
 

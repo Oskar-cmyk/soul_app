@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.components
+package com.gps.soul.ui.components
 
 import android.location.Address
 import androidx.compose.foundation.background
@@ -28,10 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.LatLng
-import com.lilstiffy.mockgps.extensions.displayString
-import com.lilstiffy.mockgps.extensions.prettyPrint
-import com.lilstiffy.mockgps.ui.theme.ButtonGreen
-import com.lilstiffy.mockgps.ui.theme.ButtonRed
+import com.gps.soul.extensions.displayString
+import com.gps.soul.extensions.prettyPrint
+import com.gps.soul.ui.theme.ButtonGreen
+import com.gps.soul.ui.theme.ButtonRed
 
 @Composable
 fun FooterComponent(

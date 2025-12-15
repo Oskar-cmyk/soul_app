@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.components
+package com.gps.soul.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lilstiffy.mockgps.ui.components.listitems.FavoriteListItem
-import com.lilstiffy.mockgps.ui.models.LocationEntry
+import com.gps.soul.ui.components.listitems.FavoriteListItem
+import com.gps.soul.ui.models.LocationEntry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

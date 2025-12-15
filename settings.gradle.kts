@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MockGps"
+rootProject.name = "SOUL"
 include(":app")
  

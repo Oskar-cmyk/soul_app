@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.extensions
+package com.gps.soul.extensions
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier

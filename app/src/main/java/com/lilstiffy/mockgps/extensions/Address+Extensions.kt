@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.extensions
+package com.gps.soul.extensions
 
 import android.location.Address
 

@@ -1,10 +1,10 @@
-package com.lilstiffy.mockgps.service
+package com.gps.soul.service
 
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import com.google.android.gms.maps.model.LatLng
-import com.lilstiffy.mockgps.MockGpsApp
+import com.gps.soul.SOULApp
 
 
 object LocationHelper {
@@ -12,7 +12,7 @@ object LocationHelper {
 
     // Geocoding
     fun reverseGeocoding(latLng: LatLng, result: (Address?) -> Unit) {
-        val geocoder = Geocoder(MockGpsApp.shared.applicationContext)
+        val geocoder = Geocoder(SOULApp.shared.applicationContext)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1) { response ->
@@ -32,7 +32,7 @@ object LocationHelper {
      * @param result lambda containing [LatLng] object if a result was found from the Geocoding lookup.
      */
     fun geocoding(searchterm: String, result: (LatLng?) -> Unit) {
-        val geocoder = Geocoder(MockGpsApp.shared.applicationContext)
+        val geocoder = Geocoder(SOULApp.shared.applicationContext)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             geocoder.getFromLocationName(

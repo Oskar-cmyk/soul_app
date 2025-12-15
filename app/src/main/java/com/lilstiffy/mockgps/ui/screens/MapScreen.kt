@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.screens
+package com.gps.soul.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -30,14 +30,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.lilstiffy.mockgps.MainActivity
-import com.lilstiffy.mockgps.R
-import com.lilstiffy.mockgps.extensions.roundedShadow
-import com.lilstiffy.mockgps.service.LocationHelper
-import com.lilstiffy.mockgps.storage.StorageManager
-import com.lilstiffy.mockgps.ui.components.FavoritesListComponent
-import com.lilstiffy.mockgps.ui.components.FooterComponent
-import com.lilstiffy.mockgps.ui.screens.viewmodels.MapViewModel
+import com.gps.soul.MainActivity
+import com.gps.soul.R
+import com.gps.soul.extensions.roundedShadow
+import com.gps.soul.service.LocationHelper
+import com.gps.soul.storage.StorageManager
+import com.gps.soul.ui.components.FavoritesListComponent
+import com.gps.soul.ui.components.FooterComponent
+import com.gps.soul.ui.screens.viewmodels.MapViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

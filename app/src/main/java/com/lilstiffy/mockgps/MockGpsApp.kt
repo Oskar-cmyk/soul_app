@@ -1,12 +1,12 @@
-package com.lilstiffy.mockgps
+package com.gps.soul
 
 import android.app.Application
-import com.lilstiffy.mockgps.service.VibratorService
-import com.lilstiffy.mockgps.storage.StorageManager
+import com.gps.soul.service.VibratorService
+import com.gps.soul.storage.StorageManager
 
-class MockGpsApp : Application() {
+class SOULApp : Application() {
     companion object {
-        lateinit var shared: MockGpsApp
+        lateinit var shared: SOULApp
             private set
     }
 

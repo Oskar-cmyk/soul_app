@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.models
+package com.gps.soul.ui.models
 
 import com.google.android.gms.maps.model.LatLng
 

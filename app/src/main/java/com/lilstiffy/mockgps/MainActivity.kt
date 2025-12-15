@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps
+package com.gps.soul
 
 import android.Manifest
 import android.content.*
@@ -18,12 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.google.android.gms.maps.model.LatLng
-import com.lilstiffy.mockgps.extensions.TutorialActivity
-import com.lilstiffy.mockgps.service.MockLocationService
-import com.lilstiffy.mockgps.service.VibratorService
-import com.lilstiffy.mockgps.storage.StorageManager
-import com.lilstiffy.mockgps.ui.screens.MapScreen
-import com.lilstiffy.mockgps.ui.theme.MockGpsTheme
+import com.gps.soul.extensions.TutorialActivity
+import com.gps.soul.service.MockLocationService
+import com.gps.soul.service.VibratorService
+import com.gps.soul.storage.StorageManager
+import com.gps.soul.ui.screens.MapScreen
+import com.gps.soul.ui.theme.SOULTheme
 
 class MainActivity : ComponentActivity() {
     private var mockLocationService: MockLocationService? = null
@@ -112,7 +112,7 @@ class MainActivity : ComponentActivity() {
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
 
         setContent {
-            MockGpsTheme {
+            SOULTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -193,5 +193,5 @@ fun MockLocationDialog(
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    MockGpsTheme {}
+    SOULTheme {}
 }

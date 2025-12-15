@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.extensions
+package com.gps.soul.extensions
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroCustomLayoutFragment
-import com.lilstiffy.mockgps.R
+import com.gps.soul.R
 
 class TutorialActivity : AppIntro() {
 

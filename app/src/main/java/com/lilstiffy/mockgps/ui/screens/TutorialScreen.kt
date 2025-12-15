@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.screens
+package com.gps.soul.ui.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

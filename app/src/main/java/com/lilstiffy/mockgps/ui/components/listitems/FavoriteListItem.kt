@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.components.listitems
+package com.gps.soul.ui.components.listitems
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,8 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.lilstiffy.mockgps.extensions.prettyPrint
-import com.lilstiffy.mockgps.ui.models.LocationEntry
+import com.gps.soul.extensions.prettyPrint
+import com.gps.soul.ui.models.LocationEntry
 
 @Composable
 fun FavoriteListItem(

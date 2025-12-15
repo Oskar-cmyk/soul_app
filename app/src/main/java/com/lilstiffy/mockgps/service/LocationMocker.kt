@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.service
+package com.gps.soul.service
 
 import android.annotation.SuppressLint
 import android.content.Context

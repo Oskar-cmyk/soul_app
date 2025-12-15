@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps
+package com.gps.soul
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

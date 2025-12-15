@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps
+package com.gps.soul
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.lilstiffy.mockgps", appContext.packageName)
+        assertEquals("com.gps.soul", appContext.packageName)
     }
 }

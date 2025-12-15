@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.theme
+package com.gps.soul.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle

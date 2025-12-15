@@ -13,11 +13,11 @@ if (propsFile.exists()) {
 }
 
 android {
-    namespace = "com.lilstiffy.mockgps"
+    namespace = "com.gps.soul"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.lilstiffy.mockgps"
+        applicationId = "com.gps.soul"
         minSdk = 22
         targetSdk = 32
         versionCode = 5

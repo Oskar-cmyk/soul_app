@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.storage
+package com.gps.soul.storage
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,9 +6,9 @@ import androidx.core.content.edit
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.lilstiffy.mockgps.extensions.equalTo
-import com.lilstiffy.mockgps.service.LocationHelper
-import com.lilstiffy.mockgps.ui.models.LocationEntry
+import com.gps.soul.extensions.equalTo
+import com.gps.soul.service.LocationHelper
+import com.gps.soul.ui.models.LocationEntry
 
 object StorageManager {
     private const val PREF = "gpsprefs"

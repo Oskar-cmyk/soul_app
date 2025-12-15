@@ -1,15 +1,15 @@
-package com.lilstiffy.mockgps.ui.screens.viewmodels
+package com.gps.soul.ui.screens.viewmodels
 
 import android.location.Address
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
-import com.lilstiffy.mockgps.extensions.displayString
-import com.lilstiffy.mockgps.service.LocationHelper
-import com.lilstiffy.mockgps.service.MockLocationService
-import com.lilstiffy.mockgps.storage.StorageManager
-import com.lilstiffy.mockgps.ui.models.LocationEntry
+import com.gps.soul.extensions.displayString
+import com.gps.soul.service.LocationHelper
+import com.gps.soul.service.MockLocationService
+import com.gps.soul.storage.StorageManager
+import com.gps.soul.ui.models.LocationEntry
 
 class MapViewModel : ViewModel() {
     var markerPosition: MutableState<LatLng> = mutableStateOf(StorageManager.getLatestLocation())

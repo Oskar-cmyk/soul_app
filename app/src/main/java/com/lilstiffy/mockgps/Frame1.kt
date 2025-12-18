@@ -30,9 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
-
-
-
+import androidx.compose.ui.draw.blur
 
 
 import com.gps.soul.MainActivity
@@ -45,13 +43,15 @@ import kotlinx.coroutines.launch
 fun MockToggleCircle(
     isMocking: Boolean,
     onToggle: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color,
+    textColor: Color
 ) {
     Box(
         modifier = modifier
             .size(120.dp)
             .clip(CircleShape)
-            .background(if (isMocking) Color(0xffE0F9FF) else Color(0xff2364c5))
+            .background(textColor)
             .clickable { onToggle() },
         contentAlignment = Alignment.Center
     ) {
@@ -60,7 +60,6 @@ fun MockToggleCircle(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun Frame1Responsive(
     modifier: Modifier = Modifier,
@@ -71,13 +70,16 @@ fun Frame1Responsive(
     var isMocking by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    // Define colors based on the mocking state
+    val backgroundColor = if (isMocking) Color(0xff2364c5) else Color(0xffe0f9ff)
+    val textColor = if (isMocking) Color(0xffe0f9ff) else Color(0xff2364c5)
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xffe0f9ff))
+            .background(backgroundColor)
             .padding(24.dp)
     ) {
-
         // Top-left menu
         Column(
             modifier = Modifier
@@ -89,13 +91,13 @@ fun Frame1Responsive(
                 text = "ABOUT",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xff2364c5)
+                color = textColor
             )
             Text(
                 text = "FAQ",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xff2364c5)
+                color = textColor
             )
         }
 
@@ -107,7 +109,9 @@ fun Frame1Responsive(
                     mapViewModel.markerPosition.value
                 )
             },
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            backgroundColor = backgroundColor,
+            textColor = textColor
         )
 
         // Bottom text
@@ -119,21 +123,18 @@ fun Frame1Responsive(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "OFF NULL ISLAND",
+                text = if (isMocking) "ON NULL ISLAND" else "OFF NULL ISLAND",
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xff2364c5)
+                color = textColor
             )
             Text(
-                text = "latitude longitude\n46.0561281, 14.5057642",
+                text = if (isMocking) "latitude longitude\n0.00000, 0.00000" else "latitude longitude\n46.0561281, 14.5057642",
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
-                color = Color(0xff2364c5)
+                color = textColor
             )
         }
-
-
-        }
     }
-
+}

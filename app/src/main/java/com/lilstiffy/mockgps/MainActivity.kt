@@ -177,12 +177,8 @@ fun MockLocationDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = "Enable Mock Location") },
         text = { Text("To use this feature, you must set this app as the mock location app in developer settings.") },
+
         confirmButton = {
-            Button(onClick = onOpenSettings) {
-                Text("Open Settings")
-            }
-        },
-        dismissButton = {
             Button(onClick = onShowTutorial) {
                 Text("Show instructions")
             }

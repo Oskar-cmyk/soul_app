@@ -22,7 +22,7 @@ import com.gps.soul.extensions.TutorialActivity
 import com.gps.soul.service.MockLocationService
 import com.gps.soul.service.VibratorService
 import com.gps.soul.storage.StorageManager
-import com.gps.soul.ui.screens.MapScreen
+import com.lilstiffy.mockgps.Frame1Responsive
 import com.gps.soul.ui.theme.SOULTheme
 
 class MainActivity : ComponentActivity() {
@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen(activity = this)
+                    Frame1Responsive(activity = this)
                     if (showDialog) {
                         MockLocationDialog(
                             onDismiss = { showDialog = false },
@@ -184,7 +184,7 @@ fun MockLocationDialog(
         },
         dismissButton = {
             Button(onClick = onShowTutorial) {
-                Text("Show Tutorial")
+                Text("Show instructions")
             }
         }
     )

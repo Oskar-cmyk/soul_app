@@ -17,6 +17,30 @@ import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.LatLng
 import com.gps.soul.ui.screens.AboutScreen
 import com.gps.soul.ui.screens.FaqScreen
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.alpha
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.center
+import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import kotlinx.coroutines.*
+
+
+
 
 // Enum to represent the current screen being displayed
 enum class Screen {
@@ -31,15 +55,82 @@ fun MockToggleCircle(
     backgroundColor: Color,
     textColor: Color
 ) {
+    // State to trigger the “reborn” circle
+    var showWhiteCircle by remember { mutableStateOf(false) }
+
+    // Animate the main circle (fade & scale)
+    val alpha by animateFloatAsState(
+        targetValue = if (isMocking) 0f else 1f,
+        animationSpec = tween(durationMillis = 600),
+        label = "circleAlpha"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (isMocking) 5.85f else 1f,
+        animationSpec = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
+        label = "circleScale"
+    )
+
+    // Trigger the white circle after animation completes
+    LaunchedEffect(isMocking) {
+        if (isMocking) {
+            // Wait until main circle finishes scaling/fading
+            kotlinx.coroutines.delay(1400)
+            showWhiteCircle = true
+        } else {
+            // Reset immediately when turning off
+            showWhiteCircle = false
+        }
+    }
+
     Box(
-        modifier = modifier
-            .size(120.dp)
-            .clip(CircleShape)
-            .background(textColor)
-            .clickable { onToggle() },
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        // You can add an icon or text here if you want
+        // Main circle (original color)
+        Box(
+            modifier = Modifier
+                .size(120.dp)
+                .graphicsLayer {
+                    this.alpha = alpha
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .clip(CircleShape)
+                .background(textColor)
+                .clickable { onToggle() }
+        )
+
+        // Reborn white circle
+        if (showWhiteCircle) {
+            // Remember initial scale to animate from 0 → 1
+            var whiteCircleTriggered by remember { mutableStateOf(false) }
+
+            val whiteScale by animateFloatAsState(
+                targetValue = if (whiteCircleTriggered) 1f else 0f,
+                animationSpec = tween(
+                    durationMillis = 600,
+                    easing = FastOutSlowInEasing
+                ),
+                label = "whiteCircleScale"
+            )
+
+            // Trigger animation once when white circle appears
+            LaunchedEffect(showWhiteCircle) {
+                if (showWhiteCircle) whiteCircleTriggered = true
+            }
+
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .graphicsLayer {
+                        scaleX = whiteScale
+                        scaleY = whiteScale
+                    }
+                    .clip(CircleShape)
+                    .background(Color.White)
+            )
+        }
     }
 }
 @Composable
@@ -126,7 +217,9 @@ fun MainContent(
                 val glitchLocation = LatLng(46.0561281, 14.5057642)
                 onToggle(activity.toggleMocking(glitchLocation))
             },
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = (-80).dp),
             backgroundColor = Color.Transparent,
             textColor = textColor
         )
@@ -164,12 +257,84 @@ fun Frame1Responsive(
 ) {
     var isMocking by remember { mutableStateOf(false) }
     var currentScreen by remember { mutableStateOf(Screen.MAIN) } // State for navigation
+    val lightBg = Color(0xffe0f9ff)
+    val darkBg = Color(0xff2364c5)
 
     // Define colors based on the mocking state
-    val backgroundColor = if (isMocking) Color(0xff2364c5) else Color(0xffe0f9ff)
-    val textColor = if (isMocking) Color(0xffe0f9ff) else Color(0xff2364c5)
 
-    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+    var delayedMocking by remember { mutableStateOf(isMocking) }
+    var delayedBackground by remember { mutableStateOf(isMocking) }
+
+    LaunchedEffect(isMocking) {
+        delay(700) // delay before text reacts
+        delayedMocking = isMocking
+    }
+    LaunchedEffect(isMocking) {
+        if (isMocking) {
+            // Turning ON → delay before text changes
+            kotlinx.coroutines.delay(700)
+        }
+        // Turning OFF → no delay
+        delayedBackground = isMocking
+    }
+
+
+    val textColor by animateColorAsState(
+        targetValue = if (delayedMocking) lightBg else darkBg,
+        animationSpec = tween(durationMillis = 400),
+        label = "delayedTextColor"
+    )
+    val backgroundColor by animateColorAsState(
+        targetValue = if (delayedBackground) darkBg else lightBg,
+        label = "backgroundColor"
+    )
+
+    val blurRadius by animateDpAsState(
+        targetValue = if (isMocking) 20.dp else 0.dp,
+        animationSpec = tween(durationMillis = 1600),
+        label = "blurRadius"
+    )
+
+    val overlayAlpha by animateFloatAsState(
+        targetValue = if (isMocking) 0.4f else 0f,
+        animationSpec = tween(durationMillis = 1600),
+        label = "overlayAlpha"
+    )
+    val revealProgress by animateFloatAsState(
+        targetValue = if (isMocking) 1f else 0f,
+        animationSpec = tween(durationMillis = 1700, easing = FastOutSlowInEasing),
+        label = "revealProgress"
+    )
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+    ) {
+
+        //  between background and content
+        Box(modifier = Modifier.fillMaxSize()) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                if (revealProgress > 0f) {
+
+                    val radius = size.maxDimension * revealProgress
+
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color(0xff2364c5), Color.Transparent),
+                            center = center, // optionally offset to toggle position
+                            radius = radius
+                        ),
+                        radius = radius,
+                        center = center
+                    )
+                }
+            }
+
+        }
+
+
 
         // HEADER (never moves)
         Header(

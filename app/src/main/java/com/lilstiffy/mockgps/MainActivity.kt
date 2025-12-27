@@ -1,5 +1,6 @@
 package com.gps.soul
 
+
 import android.Manifest
 import android.content.*
 import android.os.Build
@@ -22,7 +23,6 @@ import com.gps.soul.extensions.TutorialActivity
 import com.gps.soul.service.MockLocationService
 import com.gps.soul.service.VibratorService
 import com.gps.soul.storage.StorageManager
-import com.lilstiffy.mockgps.Frame1Responsive
 import com.gps.soul.ui.theme.SOULTheme
 
 class MainActivity : ComponentActivity() {

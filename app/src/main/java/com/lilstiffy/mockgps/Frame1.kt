@@ -1,43 +1,27 @@
-package com.lilstiffy.mockgps
+package com.gps.soul
 
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.foundation.clickable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.draw.blur
+import com.google.android.gms.maps.model.LatLng
+import com.gps.soul.ui.screens.AboutScreen
+import com.gps.soul.ui.screens.FaqScreen
 
-
-import com.gps.soul.MainActivity
-import com.gps.soul.storage.StorageManager
-import com.gps.soul.ui.components.FavoritesListComponent
-import com.gps.soul.ui.screens.viewmodels.MapViewModel
-import kotlinx.coroutines.launch
+// Enum to represent the current screen being displayed
+enum class Screen {
+    MAIN, ABOUT, FAQ
+}
 
 @Composable
 fun MockToggleCircle(
@@ -55,62 +39,95 @@ fun MockToggleCircle(
             .clickable { onToggle() },
         contentAlignment = Alignment.Center
     ) {
+        // You can add an icon or text here if you want
+    }
+}
+@Composable
+fun Header(
+    textColor: Color,
+    currentScreen: Screen,
+    onScreenChange: (Screen) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .padding(24.dp)
+            .padding(top = 48.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
 
+        when (currentScreen) {
+
+            Screen.MAIN -> {
+                // ABOUT
+                Text(
+                    text = "ABOUT",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor,
+                    modifier = Modifier.clickable {
+                        onScreenChange(Screen.ABOUT)
+                    }
+                )
+
+                // FAQ
+                Text(
+                    text = "FAQ",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor,
+                    modifier = Modifier.clickable {
+                        onScreenChange(Screen.FAQ)
+                    }
+                )
+            }
+
+            Screen.ABOUT, Screen.FAQ -> {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (currentScreen == Screen.ABOUT) "ABOUT" else "FAQ",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = "X",
+                        fontSize = 18.sp,
+
+                        fontWeight = FontWeight.Bold,
+                        color = textColor,
+                        modifier = Modifier.clickable {
+                            onScreenChange(Screen.MAIN)
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Frame1Responsive(
-    modifier: Modifier = Modifier,
-    mapViewModel: MapViewModel = viewModel(),
-    activity: MainActivity
+fun MainContent(
+    activity: MainActivity,
+    isMocking: Boolean,
+    onToggle: (Boolean) -> Unit,
+    textColor: Color
 ) {
-    val scope = rememberCoroutineScope()
-    var isMocking by remember { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    // Define colors based on the mocking state
-    val backgroundColor = if (isMocking) Color(0xff2364c5) else Color(0xffe0f9ff)
-    val textColor = if (isMocking) Color(0xffe0f9ff) else Color(0xff2364c5)
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-            .padding(24.dp)
-    ) {
-        // Top-left menu
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 48.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = "ABOUT",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = textColor
-            )
-            Text(
-                text = "FAQ",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = textColor
-            )
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
 
         // Center toggle circle
         MockToggleCircle(
             isMocking = isMocking,
             onToggle = {
-                isMocking = activity.toggleMocking(
-                    mapViewModel.markerPosition.value
-                )
+                val glitchLocation = LatLng(46.0561281, 14.5057642)
+                onToggle(activity.toggleMocking(glitchLocation))
             },
             modifier = Modifier.align(Alignment.Center),
-            backgroundColor = backgroundColor,
+            backgroundColor = Color.Transparent,
             textColor = textColor
         )
 
@@ -124,17 +141,64 @@ fun Frame1Responsive(
         ) {
             Text(
                 text = if (isMocking) "ON NULL ISLAND" else "OFF NULL ISLAND",
-                textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = textColor
             )
             Text(
-                text = if (isMocking) "latitude longitude\n0.00000, 0.00000" else "latitude longitude\n46.0561281, 14.5057642",
-                textAlign = TextAlign.Center,
+                text = if (isMocking)
+                    "latitude longitude\n0.00000, 0.00000"
+                else
+                    "latitude longitude\n46.0561281, 14.5057642",
                 fontSize = 16.sp,
                 color = textColor
             )
+        }
+    }
+}
+
+@Composable
+fun Frame1Responsive(
+    modifier: Modifier = Modifier,
+    activity: MainActivity
+) {
+    var isMocking by remember { mutableStateOf(false) }
+    var currentScreen by remember { mutableStateOf(Screen.MAIN) } // State for navigation
+
+    // Define colors based on the mocking state
+    val backgroundColor = if (isMocking) Color(0xff2364c5) else Color(0xffe0f9ff)
+    val textColor = if (isMocking) Color(0xffe0f9ff) else Color(0xff2364c5)
+
+    Box(modifier = Modifier.fillMaxSize().background(backgroundColor)) {
+
+        // HEADER (never moves)
+        Header(
+            textColor = textColor,
+            currentScreen = currentScreen,
+            onScreenChange = { currentScreen = it }
+        )
+
+        // CONTENT (changes)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 160.dp)
+        ) {
+            when (currentScreen) {
+                Screen.MAIN ->
+                    MainContent(
+                        activity = activity,
+                        isMocking = isMocking,
+                        onToggle = { isMocking = it },
+                        textColor = textColor
+                    )
+
+                Screen.ABOUT ->
+                    AboutScreen(textColor)
+
+                Screen.FAQ ->
+                    FaqScreen(textColor)
+            }
         }
     }
 }

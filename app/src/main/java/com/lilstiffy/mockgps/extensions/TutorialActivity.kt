@@ -87,33 +87,14 @@ class TutorialActivity : AppIntro() {
      */
     private fun openAboutPhoneSettings() {
         try {
-            // 1. Try Standard Android "About Phone"
-            val intent = Intent(Settings.ACTION_DEVICE_INFO_SETTINGS)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
+            // Tries to open the "About phone" screen directly.
+            startActivity(Intent(Settings.ACTION_DEVICE_INFO_SETTINGS))
             Toast.makeText(this, "Now, tap 'Build number' 7 times.", Toast.LENGTH_LONG).show()
-        } catch (e: Exception) {
-            // 2. Fallback for Xiaomi/MIUI specific "My Device" page
-            try {
-                val xiaomiIntent = Intent("android.settings.MY_DEVICE_INFO")
-                xiaomiIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(xiaomiIntent)
-                Toast.makeText(this, "Tap 'MIUI Version' 7 times.", Toast.LENGTH_LONG).show()
-            } catch (e2: Exception) {
-                // 3. Final Fallback: General Settings
-                try {
-                    val fallbackIntent = Intent(Settings.ACTION_SETTINGS)
-                    fallbackIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(fallbackIntent)
-                } catch (e3: Exception) {
-                    // 4. Absolute last resort to prevent crash
-                    Toast.makeText(this, "Unable to open settings manually.", Toast.LENGTH_SHORT).show()
-                    e3.printStackTrace()
-                }
-            }
+        } catch (e: ActivityNotFoundException) {
+            // If that fails, falls back to the main settings screen.
+            startActivity(Intent(Settings.ACTION_SETTINGS))
         }
     }
-
 
 
     override fun onSkipPressed(currentFragment: Fragment?) {

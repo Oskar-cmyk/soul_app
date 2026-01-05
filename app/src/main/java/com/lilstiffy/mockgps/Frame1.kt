@@ -84,7 +84,10 @@ fun MockToggleCircle(
     }
 
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .size(100.dp)
+            .clip(CircleShape)
+            .clickable { onToggle() },
         contentAlignment = Alignment.Center
     ) {
         // Main circle (original color)
@@ -98,7 +101,7 @@ fun MockToggleCircle(
                 }
                 .clip(CircleShape)
                 .background(textColor)
-                .clickable { onToggle() }
+
         )
 
         // Reborn white circle
@@ -219,7 +222,7 @@ fun MainContent(
             },
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = (-80).dp),
+                .offset(y = (-50).dp),
             backgroundColor = Color.Transparent,
             textColor = textColor
         )
@@ -244,7 +247,8 @@ fun MainContent(
                 else
                     "latitude longitude\n46.0561281, 14.5057642",
                 fontSize = 16.sp,
-                color = textColor
+                color = textColor,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -347,7 +351,7 @@ fun Frame1Responsive(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 160.dp)
+                .padding(top = 100.dp)
         ) {
             when (currentScreen) {
                 Screen.MAIN ->

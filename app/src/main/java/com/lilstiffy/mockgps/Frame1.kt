@@ -37,6 +37,8 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.foundation.Canvas
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
 
 
@@ -46,6 +48,12 @@ import kotlinx.coroutines.*
 enum class Screen {
     MAIN, ABOUT, FAQ
 }
+data class IpLocationResponse(
+    val lat: Double,
+    val lon: Double,
+    val city: String?,
+    val country: String?
+)
 
 @Composable
 fun MockToggleCircle(
@@ -209,7 +217,8 @@ fun MainContent(
     activity: MainActivity,
     isMocking: Boolean,
     onToggle: (Boolean) -> Unit,
-    textColor: Color
+    textColor: Color,
+    locationToMock: LatLng
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -217,8 +226,7 @@ fun MainContent(
         MockToggleCircle(
             isMocking = isMocking,
             onToggle = {
-                val glitchLocation = LatLng(46.0561281, 14.5057642)
-                onToggle(activity.toggleMocking(glitchLocation))
+                onToggle(activity.toggleMocking(locationToMock))
             },
             modifier = Modifier
                 .align(Alignment.Center)
@@ -241,11 +249,11 @@ fun MainContent(
                 fontWeight = FontWeight.Bold,
                 color = textColor
             )
-            Text(
-                text = if (isMocking)
-                    "latitude longitude\n0.00000, 0.00000"
-                else
-                    "latitude longitude\n46.0561281, 14.5057642",
+                Text(
+                    text = if (isMocking)
+                        "latitude longitude\n0.00000, 0.00000"
+                    else
+                        "latitude longitude\n${locationToMock.latitude}, ${locationToMock.longitude}",
                 fontSize = 16.sp,
                 color = textColor,
                 textAlign = TextAlign.Center
@@ -268,6 +276,28 @@ fun Frame1Responsive(
 
     var delayedMocking by remember { mutableStateOf(isMocking) }
     var delayedBackground by remember { mutableStateOf(isMocking) }
+
+    // 1. New state for the dynamic location
+    var dynamicLocation by remember { mutableStateOf(LatLng(46.0561281, 14.5057642)) }
+
+    // 2. Fetch location from IP on launch
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            try {
+                // We use ip-api.com (Free for non-commercial use, no API key required)
+                val url = "http://ip-api.com/json/"
+                val responseString = java.net.URL(url).readText()
+                val locationData = com.google.gson.Gson().fromJson(responseString, IpLocationResponse::class.java)
+
+                withContext(Dispatchers.Main) {
+                    dynamicLocation = LatLng(locationData.lat, locationData.lon)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // If it fails (no internet), it keeps the default LatLng defined above
+            }
+        }
+    }
 
     LaunchedEffect(isMocking) {
         delay(700) // delay before text reacts
@@ -359,7 +389,8 @@ fun Frame1Responsive(
                         activity = activity,
                         isMocking = isMocking,
                         onToggle = { isMocking = it },
-                        textColor = textColor
+                        textColor = textColor,
+                        locationToMock = dynamicLocation
                     )
 
                 Screen.ABOUT ->

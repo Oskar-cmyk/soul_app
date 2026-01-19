@@ -84,11 +84,9 @@ class MainActivity : ComponentActivity() {
             val isNowMocking = service.isMocking
 
             if (isNowMocking) {
-                Toast.makeText(this, "Mocking location...", Toast.LENGTH_SHORT).show()
                 VibratorService.vibrate()
             } else {
                 if (wasMocking) {
-                    Toast.makeText(this, "Stopped mocking location...", Toast.LENGTH_SHORT).show()
                     VibratorService.vibrate()
                 }
             }

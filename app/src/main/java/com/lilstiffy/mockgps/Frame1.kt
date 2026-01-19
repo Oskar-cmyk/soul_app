@@ -40,6 +40,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
+import com.google.gson.annotations.SerializedName
 
 
 
@@ -48,12 +49,16 @@ import kotlinx.coroutines.*
 enum class Screen {
     MAIN, ABOUT, FAQ
 }
+// Change lat -> latitude and lon -> longitude
+// Ensure you have this import
+
 data class IpLocationResponse(
-    val lat: Double,
-    val lon: Double,
-    val city: String?,
-    val country: String?
+    @SerializedName("latitude") val latitude: Double,
+    @SerializedName("longitude") val longitude: Double,
+    @SerializedName("city") val city: String?,
+    @SerializedName("country_name") val country: String? // 'country_name' is more reliable in their JSON
 )
+
 
 @Composable
 fun MockToggleCircle(
@@ -94,8 +99,17 @@ fun MockToggleCircle(
     Box(
         modifier = modifier
             .size(100.dp)
-            .clip(CircleShape)
-            .clickable { onToggle() },
+
+            .clickable(
+                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                // Set bounded = false to allow the ripple to expand,
+                // or keep true if you want the click feedback only on the center
+                indication = androidx.compose.material.ripple.rememberRipple(
+                    bounded = false,
+                    radius = 60.dp
+                ),
+                onClick = onToggle
+            ),
         contentAlignment = Alignment.Center
     ) {
         // Main circle (original color)
@@ -218,8 +232,16 @@ fun MainContent(
     isMocking: Boolean,
     onToggle: (Boolean) -> Unit,
     textColor: Color,
-    locationToMock: LatLng
+    locationToMock: LatLng,
+    locationReady: Boolean
 ) {
+    // Animate the opacity based on whether the location is ready
+    val textAlpha by animateFloatAsState(
+        targetValue = if (locationReady) 1f else 0f,
+        animationSpec = tween(durationMillis = 800),
+        label = "textFadeIn"
+    )
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         // Center toggle circle
@@ -243,21 +265,32 @@ fun MainContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+
+
             Text(
                 text = if (isMocking) "ON NULL ISLAND" else "OFF NULL ISLAND",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = textColor
             )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "latitude longitude",
+                    fontSize = 16.sp,                    color = textColor,
+                    textAlign = TextAlign.Center
+                )
                 Text(
                     text = if (isMocking)
-                        "latitude longitude\n0.00000, 0.00000"
+                        "0.00000, 0.00000"
                     else
-                        "latitude longitude\n${locationToMock.latitude}, ${locationToMock.longitude}",
-                fontSize = 16.sp,
-                color = textColor,
-                textAlign = TextAlign.Center
-            )
+                        "${locationToMock.latitude}, ${locationToMock.longitude}",
+                    fontSize = 16.sp,
+                    color = textColor,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.graphicsLayer { alpha = textAlpha }
+                )
+            }
+
         }
     }
 }
@@ -280,24 +313,39 @@ fun Frame1Responsive(
     // 1. New state for the dynamic location
     var dynamicLocation by remember { mutableStateOf(LatLng(46.0561281, 14.5057642)) }
 
+    var locationReady by remember { mutableStateOf(false) }
     // 2. Fetch location from IP on launch
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             try {
-                // We use ip-api.com (Free for non-commercial use, no API key required)
-                val url = "http://ip-api.com/json/"
-                val responseString = java.net.URL(url).readText()
+                val url = java.net.URL("https://ipapi.co/json/")
+                val connection = url.openConnection() as java.net.HttpURLConnection
+
+                // Add a User-Agent to prevent the API from blocking the "anonymous" request
+                connection.setRequestProperty("User-Agent", "Android-MockGps-App")
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
+
+                val responseString = connection.inputStream.bufferedReader().use { it.readText() }
                 val locationData = com.google.gson.Gson().fromJson(responseString, IpLocationResponse::class.java)
 
                 withContext(Dispatchers.Main) {
-                    dynamicLocation = LatLng(locationData.lat, locationData.lon)
+                    if (locationData.latitude != 0.0) {
+                        dynamicLocation = LatLng(locationData.latitude, locationData.longitude)
+                    }
+                    // --- TRIGGER READY STATE ---
+                    locationReady = true
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                // If it fails (no internet), it keeps the default LatLng defined above
+                withContext(Dispatchers.Main) {
+                    // Even if it fails, we show the "baked" data so the app isn't stuck empty
+                    locationReady = true
+                }
+
             }
         }
     }
+
 
     LaunchedEffect(isMocking) {
         delay(700) // delay before text reacts
@@ -390,7 +438,8 @@ fun Frame1Responsive(
                         isMocking = isMocking,
                         onToggle = { isMocking = it },
                         textColor = textColor,
-                        locationToMock = dynamicLocation
+                        locationToMock = dynamicLocation,
+                        locationReady = locationReady // Pass it here
                     )
 
                 Screen.ABOUT ->

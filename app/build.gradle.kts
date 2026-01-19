@@ -62,6 +62,7 @@ android {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1") // Add this line
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     // Latest version compatible with the old Support Library
     implementation("com.github.AppIntro:AppIntro:6.3.1")
     implementation("androidx.core:core-ktx:1.9.0")

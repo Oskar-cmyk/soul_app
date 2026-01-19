@@ -57,8 +57,8 @@ enum class Screen {
 // Ensure you have this import
 
 data class IpLocationResponse(
-    @SerializedName("latitude") val latitude: Double,
-    @SerializedName("longitude") val longitude: Double,
+    @SerializedName("latitude") val ipLat: Double, // Renamed from latitude
+    @SerializedName("longitude") val ipLng: Double, // Renamed from longitude
     @SerializedName("city") val city: String?,
     @SerializedName("country_name") val country: String? // 'country_name' is more reliable in their JSON
 )
@@ -336,9 +336,8 @@ fun Frame1Responsive(
                 val locationData = com.google.gson.Gson().fromJson(responseString, IpLocationResponse::class.java)
 
                 withContext(Dispatchers.Main) {
-                    if (locationData.latitude != 0.0) {
-                        dynamicLocation = LatLng(locationData.latitude, locationData.longitude)
-                    }
+                    if (locationData.ipLat != 0.0) {
+                        dynamicLocation = LatLng(locationData.ipLat, locationData.ipLng)                    }
                     // --- TRIGGER READY STATE ---
                     locationReady = true
                 }

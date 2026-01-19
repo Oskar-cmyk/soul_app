@@ -213,11 +213,13 @@ class MockLocationService : Service() {
 
     @SuppressLint("MissingPermission")
     private suspend fun mockLoop() {
+
         val manufacturer = Build.MANUFACTURER
         // --- Configuration for the glitch effect ---
-        val glitchEffectEnabled = false
+        val glitchEffectEnabled = true
         val randomDelayEnabled = true
         // -------------------------------------------
+        var latLng: LatLng = LatLng(0.0000000001, 0.0000000001)
 
         var nextLongDelayTime = System.currentTimeMillis() + (10_000L..20_000L).random()
 

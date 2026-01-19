@@ -37,6 +37,10 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.foundation.Canvas
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.*
@@ -61,15 +65,25 @@ data class IpLocationResponse(
 
 
 @Composable
-fun MockToggleCircle(
-    isMocking: Boolean,
-    onToggle: () -> Unit,
-    modifier: Modifier = Modifier,
-    backgroundColor: Color,
-    textColor: Color
+fun MockToggleCircle(isMocking: Boolean,
+                     onToggle: () -> Unit,
+                     modifier: Modifier = Modifier,
+                     backgroundColor: Color,
+                     textColor: Color
 ) {
-    // State to trigger the “reborn” circle
     var showWhiteCircle by remember { mutableStateOf(false) }
+
+    // --- BREATHING ANIMATION SETUP ---
+    val infiniteTransition = rememberInfiniteTransition(label = "breathing")
+    val breathingScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.1f, // How much "air" it takes in
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "breathingScale"
+    )
 
     // Animate the main circle (fade & scale)
     val alpha by animateFloatAsState(
@@ -78,20 +92,22 @@ fun MockToggleCircle(
         label = "circleAlpha"
     )
 
-    val scale by animateFloatAsState(
+    // The scale used when clicking (expanding to fill screen)
+    val expansionScale by animateFloatAsState(
         targetValue = if (isMocking) 5.85f else 1f,
         animationSpec = tween(durationMillis = 1400, easing = FastOutSlowInEasing),
         label = "circleScale"
     )
 
-    // Trigger the white circle after animation completes
+    // Combine breathing and expansion:
+    // If mocking, use expansionScale. If NOT mocking, use breathingScale.
+    val finalScale = if (isMocking) expansionScale else breathingScale
+
     LaunchedEffect(isMocking) {
         if (isMocking) {
-            // Wait until main circle finishes scaling/fading
             kotlinx.coroutines.delay(1400)
             showWhiteCircle = true
         } else {
-            // Reset immediately when turning off
             showWhiteCircle = false
         }
     }
@@ -99,11 +115,8 @@ fun MockToggleCircle(
     Box(
         modifier = modifier
             .size(100.dp)
-
             .clickable(
                 interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
-                // Set bounded = false to allow the ripple to expand,
-                // or keep true if you want the click feedback only on the center
                 indication = androidx.compose.material.ripple.rememberRipple(
                     bounded = false,
                     radius = 60.dp
@@ -118,29 +131,22 @@ fun MockToggleCircle(
                 .size(120.dp)
                 .graphicsLayer {
                     this.alpha = alpha
-                    scaleX = scale
-                    scaleY = scale
+                    scaleX = finalScale // Use the combined scale
+                    scaleY = finalScale
                 }
                 .clip(CircleShape)
                 .background(textColor)
-
         )
 
-        // Reborn white circle
+        // Reborn white circle (Keep this as is)
         if (showWhiteCircle) {
-            // Remember initial scale to animate from 0 → 1
             var whiteCircleTriggered by remember { mutableStateOf(false) }
-
             val whiteScale by animateFloatAsState(
                 targetValue = if (whiteCircleTriggered) 1f else 0f,
-                animationSpec = tween(
-                    durationMillis = 600,
-                    easing = FastOutSlowInEasing
-                ),
+                animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
                 label = "whiteCircleScale"
             )
 
-            // Trigger animation once when white circle appears
             LaunchedEffect(showWhiteCircle) {
                 if (showWhiteCircle) whiteCircleTriggered = true
             }
@@ -430,6 +436,7 @@ fun Frame1Responsive(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 100.dp)
+                .padding(bottom = 20.dp)
         ) {
             when (currentScreen) {
                 Screen.MAIN ->

@@ -28,6 +28,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.net.URL
 
 // Your data class
@@ -40,45 +41,60 @@ data class FaqSection(
 fun FaqScreen(textColor: Color) {
     // 1. Get Context to access assets
     val context = LocalContext.current
+    val cacheFileName = "faq_cache.json" // Our dynamic local file
+    val assetFileName = "faq_backup.json" // Our read-only safety backup
+
 
     // State to hold the data
     var sections by remember { mutableStateOf<List<FaqSection>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorText by remember { mutableStateOf<String?>(null) }
 
+    var isOfflineMode by remember { mutableStateOf(false) }
     // URL to your raw JSON file
-    val jsonUrl = "https://your-raw-json-url-here/faq_data.json"
-
+    val jsonUrl = "https://codeberg.org/Oskar-cmyk/mockgps_android/raw/branch/main_des/app/src/main/assets/faq_backup.json"
     // Fetch data when the screen launches
+    // ... inside FaqScreen ...
+
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             try {
-                // Try fetching from the internet
+                // 1. Try fetching from the internet
                 val jsonString = URL(jsonUrl).readText()
                 val listType = object : TypeToken<List<FaqSection>>() {}.type
                 val fetchedList: List<FaqSection> = Gson().fromJson(jsonString, listType)
 
+                // 2. SUCCESS: Save this new JSON to internal storage for next time
+                context.openFileOutput(cacheFileName, Context.MODE_PRIVATE).use {
+                    it.write(jsonString.toByteArray())
+                }
+
                 withContext(Dispatchers.Main) {
                     sections = fetchedList
+                    isOfflineMode = false
                     isLoading = false
                 }
             } catch (e: Exception) {
-                // 2. FALLBACK: Network failed, try loading from local assets
+                // 3. NETWORK FAILED: Try the dynamic cache first, then the hardcoded asset
                 try {
-                    val jsonString = context.assets.open("faq_backup.json")
-                        .bufferedReader()
-                        .use { it.readText() }
+                    val cacheFile = File(context.filesDir, cacheFileName)
+                    val jsonString = if (cacheFile.exists()) {
+                        // Load from the saved cache
+                        cacheFile.readText()
+                    } else {
+                        // Load from assets if cache doesn't exist yet
+                        context.assets.open(assetFileName).bufferedReader().use { it.readText() }
+                    }
 
                     val listType = object : TypeToken<List<FaqSection>>() {}.type
                     val localList: List<FaqSection> = Gson().fromJson(jsonString, listType)
 
                     withContext(Dispatchers.Main) {
                         sections = localList
+                        isOfflineMode = true
                         isLoading = false
-                        // Optional: You could set a flag here to show a small "Offline mode" badge
                     }
-                } catch (assetException: Exception) {
-                    // 3. Absolute failure (neither network nor local worked)
+                } catch (fallbackException: Exception) {
                     withContext(Dispatchers.Main) {
                         errorText = "Failed to load content."
                         isLoading = false
@@ -157,6 +173,7 @@ fun FaqScreen(textColor: Color) {
             ) {
                 // ... (Header Item code remains the same) ...
                 item {
+
                     Text(
                         text = "Frequently asked questions",
                         fontSize = 24.sp,

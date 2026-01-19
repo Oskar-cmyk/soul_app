@@ -8,16 +8,19 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroCustomLayoutFragment
 import com.gps.soul.R
+
 
 class TutorialActivity : AppIntro() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        showStatusBar(true)
         val devOptionsEnabled = Settings.Global.getInt(
             contentResolver,
             Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
@@ -72,12 +75,17 @@ class TutorialActivity : AppIntro() {
      */
     fun openDeveloperOptions(view: View) {
         try {
-            // Best case: Open developer options directly.
             startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
-        } catch (e: ActivityNotFoundException) {
-            // Fallback: Show a toast and open the main settings.
-            Toast.makeText(this, "Couldn't open Developer Options directly.", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(Settings.ACTION_SETTINGS))
+            Toast.makeText(
+                this,
+                "Go to Select mock location app→ Select SOUL as Mock location application",
+                Toast.LENGTH_LONG
+            ).show()
+        } catch (e: Exception) {
+            // Fallback to main settings
+            try {
+                startActivity(Intent(Settings.ACTION_SETTINGS))
+            } catch (_: Exception) {}
         }
     }
 
@@ -87,14 +95,19 @@ class TutorialActivity : AppIntro() {
      */
     private fun openAboutPhoneSettings() {
         try {
-            // Tries to open the "About phone" screen directly.
             startActivity(Intent(Settings.ACTION_DEVICE_INFO_SETTINGS))
-            Toast.makeText(this, "Now, tap 'Build number' 7 times.", Toast.LENGTH_LONG).show()
-        } catch (e: ActivityNotFoundException) {
-            // If that fails, falls back to the main settings screen.
-            startActivity(Intent(Settings.ACTION_SETTINGS))
+            Toast.makeText(
+                this,
+                "Go to About phone → Software information → tap Build number 7 times",
+                Toast.LENGTH_LONG
+            ).show()
+        } catch (e: Exception) {
+            // absolute last resort, but prevents crash
         }
     }
+
+
+
 
 
     override fun onSkipPressed(currentFragment: Fragment?) {

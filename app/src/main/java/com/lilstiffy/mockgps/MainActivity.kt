@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
     private var isBound = false
     private var showDialog by mutableStateOf(false)
 
+
     // New launcher for the notification permission
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()

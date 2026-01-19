@@ -1,18 +1,18 @@
 [
   {
-    "title": "What is GPS Soul?",
-    "content": "GPS Soul is a developer tool that allows you to test your app's location-based features by mocking GPS data. It's designed to be simple, stable, and easy to use."
+    "title": "WtestSoul?",
+    "content": "test test is a developer tool that test you to test your app's location-based features by mocking GPS data. It's designed to be simple, stable, and easy to use."
   },
   {
-    "title": "How does it work?",
-    "content": "The app uses Android's 'mock location' feature, which is part of the Developer Options. When you set GPS Soul as the mock location app, it can provide a fake GPS signal to the entire system, allowing you to simulate being anywhere in the world."
+    "title": "How does it test?",
+    "content": "The app uses Android's 'mock test' test, which is part of the Developer Options. When you set GPS Soul as the mock location app, it can provide a fake GPS signal to the entire system, allowing you to simulate being anywhere in the world."
   },
   {
-    "title": "Is this safe for my phone?",
+    "title": "Is this safe for my test?",
     "content": "Yes, completely. This app uses a standard Android developer feature and does not modify your system files. When you stop mocking, your phone's real GPS will function as normal."
   },
   {
-    "title": "Why does the location sometimes 'jump'?",
-    "content": "Modern phones use a 'fused' location from GPS, Wi-Fi, and cellular networks. If our mock GPS signal strongly disagrees with real network data, the system might briefly jump to the real location. Our app tries to minimize this, but on some devices, occasional jumps can still occur."
+    "title": "Why test the location sometimes 'jump'?",
+    "content": "Test phones use a 'fused' test from GPS, Wi-Fi, and cellular networks. If our mock GPS signal strongly disagrees with real network data, the system might briefly jump to the real location. Our app tries to minimize this, but on some devices, occasional jumps can still occur."
   }
 ]

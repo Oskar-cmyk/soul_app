@@ -77,7 +77,7 @@ fun MockToggleCircle(isMocking: Boolean,
     val infiniteTransition = rememberInfiniteTransition(label = "breathing")
     val breathingScale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.1f, // How much "air" it takes in
+        targetValue = 1.2f, // How much "air" it takes in
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
@@ -131,7 +131,7 @@ fun MockToggleCircle(isMocking: Boolean,
                 .size(120.dp)
                 .graphicsLayer {
                     this.alpha = alpha
-                    scaleX = finalScale // Use the combined scale
+                    scaleX = finalScale
                     scaleY = finalScale
                 }
                 .clip(CircleShape)
@@ -155,8 +155,8 @@ fun MockToggleCircle(isMocking: Boolean,
                 modifier = Modifier
                     .size(120.dp)
                     .graphicsLayer {
-                        scaleX = whiteScale
-                        scaleY = whiteScale
+                        scaleX = whiteScale * breathingScale
+                        scaleY = whiteScale * breathingScale
                     }
                     .clip(CircleShape)
                     .background(Color.White)

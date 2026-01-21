@@ -169,13 +169,14 @@ class MockLocationService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val lat = String.format("%.5f", latLng.latitude)
-        val lng = String.format("%.5f", latLng.longitude)
+
+        val latStr = String.format("%.5f", latLng.latitude)
+        val lngStr = String.format("%.5f", latLng.longitude)
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("Mock GPS Active")
-            .setContentText("Location: $lat, $lng")
+            .setContentText("Location: $latStr, $lngStr") // This will now show 0.00000
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .build()
     }
@@ -245,6 +246,7 @@ class MockLocationService : Service() {
         while (isMocking) {
             val corrected = if (latLng.latitude == 0.0 && latLng.longitude == 0.0)
                 LatLng(0.00000001, 0.0000000) // Avoid Null Island
+
             else
                 latLng
 
@@ -264,7 +266,6 @@ class MockLocationService : Service() {
             }
 
             Log.d(TAG, "Mocked location: ${loc.latitude}, ${loc.longitude}")
-
             val delayMillis = computeDelay(randomDelayEnabled)
             delay(delayMillis)
 

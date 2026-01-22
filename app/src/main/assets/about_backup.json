@@ -1,18 +1,18 @@
 [
   {
-    "title": "What is GPS Soul?",
-    "content": "GPS Soul is a developer tool that allows you to test your app's location-based features by mocking GPS data. It's designed to be simple, stable, and easy to use."
+    "title": "Why does this app exist?",
+    "content": "While precise geolocation is a useful tool if you are trying to navigate your way to work, or get picked up in the correct location by a taxi, it also reveals a lot of information you may not want to share. This app is a tool to teleport you to the one place, where no rules apply, where obfuscation is the default condition and not a mere glitch."
   },
   {
-    "title": "How does it work?",
-    "content": "The app uses Android's 'mock location' feature, which is part of the Developer Options. When you set GPS Soul as the mock location app, it can provide a fake GPS signal to the entire system, allowing you to simulate being anywhere in the world."
+    "title": "What is Null Island?",
+    "content": "Null Island refers to the point at coordinates 0° latitude, 0° longitude, where the equator intersects the prime meridian in the Atlantic Ocean. It has no physical landmass and exists primarily as a reference point defined by the global coordinate grid. In Geographic Information Systems (GIS), Null Island is commonly used as a default location when geospatial data are missing, incomplete, or incorrectly formatted. As a result, diverse and unrelated data, businesses, crimes or travel records, are clustered at this single point, which in turn makes it the perfect hiding spot for all of us!"
   },
   {
-    "title": "Is this safe for my phone?",
-    "content": "Yes, completely. This app uses a standard Android developer feature and does not modify your system files. When you stop mocking, your phone's real GPS will function as normal."
+    "title": "Why the name SOUL?",
+    "content": "The one physical object that exists on coordinates 0,0 is a weather station buoy owned and maintained by the PIRATA network (Prediction and Research Moored Array in the Tropical Atlantic), a multinational system of buoys that monitor weather and ocean conditions in the tropical Atlantic. Each buoy is named after a genre of music, the buoy at 0, 0 was named “Soul,” referencing soul music. SOUL app follows in the established tradition on Null Island and carries its name into a new system."
   },
   {
-    "title": "Why does the location sometimes 'jump'?",
-    "content": "Modern phones use a 'fused' location from GPS, Wi-Fi, and cellular networks. If our mock GPS signal strongly disagrees with real network data, the system might briefly jump to the real location. Our app tries to minimize this, but on some devices, occasional jumps can still occur."
+    "title": "What can you do with the app?",
+    "content": "The most obvious is spoofing your mapping apps, but you can play around with your food delivery, Uber or any other ridesharing app, or even dating apps that use proximity tools to find your next match! The options may be limitless."
   }
 ]

@@ -320,6 +320,7 @@ fun Frame1Responsive(
     var dynamicLocation by remember { mutableStateOf(LatLng(46.0561281, 14.5057642)) }
 
     var locationReady by remember { mutableStateOf(false) }
+    var showSuccessPopup by remember { mutableStateOf(false) }
     // 2. Fetch location from IP on launch
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -364,8 +365,29 @@ fun Frame1Responsive(
         // Turning OFF → no delay
         delayedBackground = isMocking
     }
-
-
+    LaunchedEffect(isMocking) {
+        if (isMocking) {
+            delay(3000) // Wait 3 seconds
+            showSuccessPopup = true
+        } else {
+            showSuccessPopup = false // Reset when turned off
+        }
+    }
+    if (showSuccessPopup) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showSuccessPopup = false },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { showSuccessPopup = false }) {
+                    Text("OK", color = Color(0xff2364c5))
+                }
+            },
+            title = { Text("You are now on NULL island", fontWeight = FontWeight.Bold) },
+            text = { Text("You may now leave the app and use your phone as before. For an easy check of your new location, open your map app. Don’t forget to turn SOUL OFF when you need your phone to locate you again physically.") }, // Your custom text
+            containerColor = Color.White,
+            titleContentColor = Color(0xff2364c5),
+            textContentColor = Color.Black
+        )
+    }
     val textColor by animateColorAsState(
         targetValue = if (delayedMocking) lightBg else darkBg,
         animationSpec = tween(durationMillis = 400),
@@ -448,11 +470,13 @@ fun Frame1Responsive(
                         locationReady = locationReady // Pass it here
                     )
 
+
                 Screen.ABOUT ->
                     AboutScreen(textColor)
 
                 Screen.FAQ ->
                     FaqScreen(textColor)
+
             }
         }
     }

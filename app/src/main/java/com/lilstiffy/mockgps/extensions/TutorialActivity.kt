@@ -60,12 +60,7 @@ class TutorialActivity : AppIntro() {
             newFragment.arguments?.getInt("layoutResId") == R.layout.slide_enable_developer_options) {
             val view = newFragment.view
             // Find the button by its ID
-            val openSettingsButton = view?.findViewById<Button>(R.id.open_settings_button)
 
-            // Set the click listener on the button
-            openSettingsButton?.setOnClickListener {
-                openAboutPhoneSettings()
-            }
         }
     }
 
@@ -93,7 +88,7 @@ class TutorialActivity : AppIntro() {
      * Opens the "About phone" settings screen to guide the user
      * to tap the "Build number".
      */
-    private fun openAboutPhoneSettings() {
+    fun openAboutPhoneSettings(view: View) {
         try {
             startActivity(Intent(Settings.ACTION_DEVICE_INFO_SETTINGS))
             Toast.makeText(

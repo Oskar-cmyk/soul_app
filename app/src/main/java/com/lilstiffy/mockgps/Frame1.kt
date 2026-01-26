@@ -381,8 +381,8 @@ fun Frame1Responsive(
                     Text("OK", color = Color(0xff2364c5))
                 }
             },
-            title = { Text("You are now on NULL island", fontWeight = FontWeight.Bold) },
-            text = { Text("You may now leave the app and use your phone as before. For an easy check of your new location, open your map app. Don’t forget to turn SOUL OFF when you need your phone to locate you again physically.") }, // Your custom text
+            title = { Text("You are now on NULL Island", fontWeight = FontWeight.Bold) },
+            text = { Text("You may now leave the app and use your phone as before. For an easy check, open your map app. Turn SOUL OFF when you need your phone to locate you again physically.") }, // Your custom text
             containerColor = Color.White,
             titleContentColor = Color(0xff2364c5),
             textContentColor = Color.Black

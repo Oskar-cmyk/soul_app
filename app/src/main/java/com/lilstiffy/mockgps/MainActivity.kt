@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
             val isNowMocking = service.isMocking
 
             if (isNowMocking) {
-                VibratorService.vibrate()p
+                VibratorService.vibrate()
             } else {
                 if (wasMocking) {
                     VibratorService.vibrate()

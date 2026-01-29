@@ -229,17 +229,14 @@ fun AboutScreen(textColor: Color) {
                             Text(
                                 text = section.email,
                                 fontSize = 16.sp,
-                                color = Color(0xff2364c5),
+                                color = Color(0xff2364c5), // Your brand blue color
                                 fontWeight = FontWeight.Bold,
                                 textDecoration = TextDecoration.Underline,
                                 modifier = Modifier
-                                    // 1. Padding inside the clickable area makes it easier to hit
-                                    .padding(top = 8.dp, bottom = 8.dp)
+                                    .padding(top = 4.dp)
                                     .clickable {
                                         uriHandler.openUri("mailto:${section.email}")
                                     }
-                                    // 2. Ensure it's treated as a distinct UI element
-                                    .fillMaxWidth()
                             )
                         }
 

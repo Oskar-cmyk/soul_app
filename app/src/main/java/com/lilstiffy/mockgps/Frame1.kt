@@ -285,15 +285,15 @@ fun MainContent(
                 if (locationReady && locationToMock == null && !isMocking) {
                     // Show this ONLY when off and no data found
                     Text(
+                        text = "latitude longitude",
+                        fontSize = 16.sp,
+                        color = textColor
+                    )
+                    Text(
                         text = "no data available",
                         fontSize = 16.sp,
                         color = textColor,
                         modifier = Modifier.graphicsLayer { alpha = textAlpha }
-                    )
-                    Text(
-                        text = "dontknow",
-                        fontSize = 16.sp,
-                        color = textColor.copy(alpha = 0.6f)
                     )
                 } else {
                     Text(

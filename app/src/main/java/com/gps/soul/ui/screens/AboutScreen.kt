@@ -36,7 +36,8 @@ import kotlin.io.path.readText
 // Your data class
 data class AboutSection(
     val title: String,
-    val content: String
+    val content: String,
+    val email: String? = null
 )
 
 @Composable
@@ -121,6 +122,7 @@ fun AboutScreen(textColor: Color) {
         targetValue = if (startAnimation) 1f else 0f,
         animationSpec = tween(durationMillis = 600), label = "alpha"
     )
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLoading) {
@@ -223,6 +225,24 @@ fun AboutScreen(textColor: Color) {
                             color = textColor.copy(alpha = 0.9f),
                             lineHeight = 24.sp
                         )
+                        if (!section.email.isNullOrEmpty()) {
+                            Text(
+                                text = section.email,
+                                fontSize = 16.sp,
+                                color = Color(0xff2364c5),
+                                fontWeight = FontWeight.Bold,
+                                textDecoration = TextDecoration.Underline,
+                                modifier = Modifier
+                                    // 1. Padding inside the clickable area makes it easier to hit
+                                    .padding(top = 8.dp, bottom = 8.dp)
+                                    .clickable {
+                                        uriHandler.openUri("mailto:${section.email}")
+                                    }
+                                    // 2. Ensure it's treated as a distinct UI element
+                                    .fillMaxWidth()
+                            )
+                        }
+
                     }
                 }
             }

@@ -169,6 +169,7 @@ class MockLocationService : Service() {
     }
 
     private fun createNotification(): Notification {
+       var latLng: LatLng = LatLng(0.0000000001, 0.0000000001)
 
         val latStr = String.format("%.5f", latLng.latitude)
         val lngStr = String.format("%.5f", latLng.longitude)
@@ -220,7 +221,7 @@ class MockLocationService : Service() {
         val glitchEffectEnabled = true
         val randomDelayEnabled = true
         // -------------------------------------------
-        var latLng: LatLng = LatLng(0.0000000001, 0.0000000001)
+       var latLng: LatLng = LatLng(0.0000000001, 0.0000000001)
 
         var nextLongDelayTime = System.currentTimeMillis() + (10_000L..20_000L).random()
 

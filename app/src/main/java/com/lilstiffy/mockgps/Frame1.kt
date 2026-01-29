@@ -120,7 +120,7 @@ fun MockToggleCircle(isMocking: Boolean,
                 interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
                 indication = androidx.compose.material.ripple.rememberRipple(
                     bounded = false,
-                    radius = 60.dp
+                    radius = 70.dp
                 ),
                 onClick = onToggle
             ),
@@ -134,6 +134,7 @@ fun MockToggleCircle(isMocking: Boolean,
                     this.alpha = alpha
                     scaleX = finalScale
                     scaleY = finalScale
+                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin.Center
                 }
                 .clip(CircleShape)
                 .background(textColor)
@@ -158,6 +159,7 @@ fun MockToggleCircle(isMocking: Boolean,
                     .graphicsLayer {
                         scaleX = whiteScale * breathingScale
                         scaleY = whiteScale * breathingScale
+
                     }
                     .clip(CircleShape)
                     .background(Color.White)
@@ -239,7 +241,7 @@ fun MainContent(
     isMocking: Boolean,
     onToggle: (Boolean) -> Unit,
     textColor: Color,
-    locationToMock: LatLng,
+    locationToMock: LatLng?,
     locationReady: Boolean
 ) {
     // Animate the opacity based on whether the location is ready
@@ -255,11 +257,10 @@ fun MainContent(
         MockToggleCircle(
             isMocking = isMocking,
             onToggle = {
-                onToggle(activity.toggleMocking(locationToMock))
-            },
+                onToggle(activity.toggleMocking(locationToMock ?: LatLng(0.0, 0.0)))            },
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = (-50).dp),
+                .offset(y = (-43).dp),
             backgroundColor = Color.Transparent,
             textColor = textColor
         )
@@ -281,23 +282,34 @@ fun MainContent(
                 color = textColor
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "latitude longitude",
-                    fontSize = 16.sp,                    color = textColor,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = if (isMocking)
-                        "0.00000, 0.00000"
-                    else
-                        "${locationToMock.latitude}, ${locationToMock.longitude}",
-                    fontSize = 16.sp,
-                    color = textColor,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.graphicsLayer { alpha = textAlpha }
-                )
+                if (locationReady && locationToMock == null && !isMocking) {
+                    // Show this ONLY when off and no data found
+                    Text(
+                        text = "no data available",
+                        fontSize = 16.sp,
+                        color = textColor,
+                        modifier = Modifier.graphicsLayer { alpha = textAlpha }
+                    )
+                    Text(
+                        text = "dontknow",
+                        fontSize = 16.sp,
+                        color = textColor.copy(alpha = 0.6f)
+                    )
+                } else {
+                    Text(
+                        text = "latitude longitude",
+                        fontSize = 16.sp,
+                        color = textColor
+                    )
+                    Text(
+                        text = if (isMocking) "0.00000, 0.00000"
+                        else "${locationToMock?.latitude ?: 0.0}, ${locationToMock?.longitude ?: 0.0}",
+                        fontSize = 16.sp,
+                        color = textColor,
+                        modifier = Modifier.graphicsLayer { alpha = textAlpha }
+                    )
+                }
             }
-
         }
     }
 }
@@ -318,7 +330,7 @@ fun Frame1Responsive(
     var delayedBackground by remember { mutableStateOf(isMocking) }
 
     // 1. New state for the dynamic location
-    var dynamicLocation by remember { mutableStateOf(LatLng(46.0561281, 14.5057642)) }
+    var dynamicLocation by remember { mutableStateOf<LatLng?>(null) }
 
     var locationReady by remember { mutableStateOf(false) }
     var showSuccessPopup by remember { mutableStateOf(false) }
@@ -388,7 +400,7 @@ fun Frame1Responsive(
             showSuccessPopup = false // Reset when turned off
         }
     }
-    if (showSuccessPopup) {
+    if (showSuccessPopup && currentScreen == Screen.MAIN) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showSuccessPopup = false },
             confirmButton = {
@@ -441,17 +453,23 @@ fun Frame1Responsive(
         Box(modifier = Modifier.fillMaxSize()) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 if (revealProgress > 0f) {
+                    // Calculate the center based on the actual drawing area
+                    // Subtract 50.dp from the Y coordinate to match your button's offset
+                    val toggleCenter = Offset(
+                        x = size.width / 2f,
+                        y = (size.height / 2f)
+                    )
 
                     val radius = size.maxDimension * revealProgress
 
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(Color(0xff2364c5), Color.Transparent),
-                            center = center, // optionally offset to toggle position
+                            center = toggleCenter, // Use the calculated center
                             radius = radius
                         ),
                         radius = radius,
-                        center = center
+                        center = toggleCenter // Use the calculated center
                     )
                 }
             }

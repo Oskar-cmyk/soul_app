@@ -17,6 +17,7 @@
   },
   {
   "title":"Contact",
-  "content":"For more information, questions, and inquiries email nullislandxyz@gmail.com"
+  "content":"For more information, questions, and inquiries email ",
+    "email" : "nullislandxyz@gmail.com"
   }
 ]

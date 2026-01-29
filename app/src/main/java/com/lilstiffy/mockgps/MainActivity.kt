@@ -73,7 +73,9 @@ class MainActivity : ComponentActivity() {
             isBound = false
         }
     }
-
+    fun isServiceMocking(): Boolean {
+        return mockLocationService?.isMocking ?: false
+    }
     fun toggleMocking(latLng: LatLng): Boolean {
         if (isBound) {
             val service = mockLocationService ?: return false

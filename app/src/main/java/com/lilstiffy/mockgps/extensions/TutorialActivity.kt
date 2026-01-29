@@ -63,7 +63,47 @@ class TutorialActivity : AppIntro() {
 
         }
     }
+    override fun onResume() {
+        super.onResume()
+        // Every time the user comes back to the app, check if they fixed the settings
+        if (isSystemReadyForMocking()) {
+            finish() // Closes TutorialActivity and reveals MainActivity
+        }
+    }
 
+    /**
+     * Checks if Developer Options are enabled AND if this app
+     * is selected as the Mock Location provider.
+     */
+    private fun isSystemReadyForMocking(): Boolean {
+        // 1. Check Developer Options
+        val devOptionsEnabled = Settings.Global.getInt(
+            contentResolver,
+            Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
+            0
+        ) != 0
+
+        if (!devOptionsEnabled) return false
+
+        // 2. Check if this app is the selected Mock Location App
+        // We do this by trying to add a test provider.
+        // If it throws a SecurityException, we are NOT the selected app.
+        val locationManager = getSystemService(android.content.Context.LOCATION_SERVICE) as android.location.LocationManager
+        return try {
+            locationManager.addTestProvider(
+                android.location.LocationManager.GPS_PROVIDER,
+                false, false, false, false, true, true, true,
+                0, 5
+            )
+            locationManager.removeTestProvider(android.location.LocationManager.GPS_PROVIDER)
+            true // Success! We are the mock provider
+        } catch (e: SecurityException) {
+            false // Not selected yet
+        } catch (e: Exception) {
+            // Some devices might throw other exceptions if GPS is disabled
+            false
+        }
+    }
     /**
      * This function is called by the 'onClick' attribute
      * in the XML layout files.

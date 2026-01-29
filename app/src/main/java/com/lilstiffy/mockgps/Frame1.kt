@@ -43,6 +43,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import kotlinx.coroutines.*
 import com.google.gson.annotations.SerializedName
 
@@ -306,7 +307,7 @@ fun Frame1Responsive(
     modifier: Modifier = Modifier,
     activity: MainActivity
 ) {
-    var isMocking by remember { mutableStateOf(false) }
+    var isMocking by remember { mutableStateOf(activity.isServiceMocking()) }
     var currentScreen by remember { mutableStateOf(Screen.MAIN) } // State for navigation
     val lightBg = Color(0xffe0f9ff)
     val darkBg = Color(0xff2364c5)
@@ -321,6 +322,20 @@ fun Frame1Responsive(
 
     var locationReady by remember { mutableStateOf(false) }
     var showSuccessPopup by remember { mutableStateOf(false) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                // When app comes back to front, ask the activity for the true state
+                isMocking = activity.isServiceMocking()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
     // 2. Fetch location from IP on launch
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {

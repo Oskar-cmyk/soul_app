@@ -20,8 +20,8 @@ android {
         applicationId = "com.gps.soul"
         minSdk = 22
         targetSdk = 32
-        versionCode = 5
-        versionName = "1.0.4"
+        versionCode = 1
+        versionName = "0.1"
 
         manifestPlaceholders["API_KEY"] = props.getProperty("MAPS_API_KEY") ?: ""
 
@@ -38,6 +38,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

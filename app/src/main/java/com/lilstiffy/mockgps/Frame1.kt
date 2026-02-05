@@ -80,7 +80,7 @@ fun MockToggleCircle(isMocking: Boolean,
         initialValue = 1f,
         targetValue = 1.2f, // How much "air" it takes in
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1500, easing = FastOutSlowInEasing),
+            animation = tween(durationMillis = 500, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "breathingScale"
